@@ -8,8 +8,7 @@ public class JavaMail implements Runnable {
 	static String email, password;
 	static Properties props;
 	static Session session;
-	static MimeMessage msg;
-	static final int MaxThread = 1;
+	static final int MaxThread = 50;
 	
 	public static void main(String[] args) {
 		
@@ -21,9 +20,9 @@ public class JavaMail implements Runnable {
 		// Email Construct
 		setProperties();
 		Login();
-		setContentMail();
 		
 		Runnable runnable = new JavaMail();
+		// Thread will be create
 		Thread[] threads = new Thread[MaxThread];
 		for (int i = 0; i < threads.length; i++) {
 			threads[i] = new Thread(runnable);
@@ -45,6 +44,7 @@ public class JavaMail implements Runnable {
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");
 		props.put("mail.debug", "true");
+		props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
 	}
 	
 	public static void Login() {
@@ -58,12 +58,12 @@ public class JavaMail implements Runnable {
 				});
 	}
 	
-	public static void setContentMail() {
+	public static void SendMail() {
 		
-		try {
-			msg = new MimeMessage(session);
+        try {
+        	MimeMessage msg = new MimeMessage(session);
 	        msg.setFrom(new InternetAddress(email));
-	        msg.setRecipients(Message.RecipientType.TO, "naufalmwh11@gmail.com");
+	        msg.setRecipients(Message.RecipientType.TO, "naufal.m.w.h@gmail.com");
 	        msg.setSubject("Simple Test Java Mail");
 	        msg.setSentDate(new Date());
 	        Multipart multipart = new MimeMultipart();
@@ -104,17 +104,9 @@ public class JavaMail implements Runnable {
 	        multipart.addBodyPart(htmlPart);
 	        
 	        msg.setContent(multipart);
-	        
+	        Transport.send(msg);
+			
 	        System.out.println("---Done---");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void SendMail() {
-		
-        try {
-			Transport.send(msg);
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
