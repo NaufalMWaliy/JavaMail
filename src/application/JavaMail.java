@@ -1,3 +1,13 @@
+/**
+ * Java Mail Application, By :
+ * 	
+ * 	Mughie Arif
+ * 	Muhammad Fadhil
+ * 	Naufal Muntaaza
+ * 
+ * Copyright 2018
+ */
+
 package application;
 
 import java.util.*;
@@ -10,6 +20,9 @@ public class JavaMail implements Runnable {
 	static String email, password;
 	static Properties props;
 	static Session session;
+	/*
+	 * CHANGE MAXTHREAD IF TO MUCH.
+	 */
 	static final int MAXTHREAD = 1000;
 	static int sendedMail = 0;
 	
@@ -20,8 +33,9 @@ public class JavaMail implements Runnable {
 		System.out.print("Email : "); email = scanner.nextLine();
 		System.out.print("Password : "); password = scanner.nextLine();
 		
-		// Email Construct
+		// Set SMTP Properties
 		setProperties();
+		// Login to Your GMAIL
 		Login();
 		
 		// Start Time
@@ -33,8 +47,6 @@ public class JavaMail implements Runnable {
 		for (int i = 0; i < threads.length; i++) {
 			threads[i] = new Thread(runnable);
 			threads[i].start();
-		}
-		for (int i = 0; i < threads.length; i++) {
 			try {
 				threads[i].join();
 			} catch (InterruptedException e) {
@@ -77,7 +89,7 @@ public class JavaMail implements Runnable {
 				});
 	}
 	
-	public synchronized static void SendMail() {
+	public  static void SendMail() {
 		
         try {
         	MimeMessage msg = new MimeMessage(session);
