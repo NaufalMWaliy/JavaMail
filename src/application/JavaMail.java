@@ -1,6 +1,8 @@
 package application;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -8,7 +10,8 @@ public class JavaMail implements Runnable {
 	static String email, password;
 	static Properties props;
 	static Session session;
-	static final int MaxThread = 50;
+	static final int MAXTHREAD = 1000;
+	static int sendedMail = 0;
 	
 	public static void main(String[] args) {
 		
@@ -21,13 +24,29 @@ public class JavaMail implements Runnable {
 		setProperties();
 		Login();
 		
+		// Start Time
+		long startTime = System.currentTimeMillis();
+		
 		Runnable runnable = new JavaMail();
 		// Thread will be create
-		Thread[] threads = new Thread[MaxThread];
+		Thread[] threads = new Thread[MAXTHREAD];
 		for (int i = 0; i < threads.length; i++) {
 			threads[i] = new Thread(runnable);
 			threads[i].start();
 		}
+		for (int i = 0; i < threads.length; i++) {
+			try {
+				threads[i].join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		// End Time
+		long endTime = System.currentTimeMillis();
+		// Caluculate Total Execution Time
+		System.out.println(String.format("Sent %d Mail From %d", sendedMail, MAXTHREAD));
+		System.out.println(String.format("Total Execution Time : %d Second or %d Millisecond ", TimeUnit.MILLISECONDS.toSeconds(endTime - startTime), (endTime - startTime)));
 	}
 	
 	public void run() {
@@ -105,6 +124,7 @@ public class JavaMail implements Runnable {
 	        
 	        msg.setContent(multipart);
 	        Transport.send(msg);
+	        sendedMail++;
 			
 	        System.out.println("---Done---");
 		} catch (MessagingException e) {
