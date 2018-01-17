@@ -63,7 +63,7 @@ public class JavaMail implements Runnable {
 		props.put("mail.smtp.host", "smtp.gmail.com");
 		props.put("mail.smtp.port", "587");
 		props.put("mail.debug", "true");
-		props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+		props.put("mail.smtp.starttsl.enable", "true");
 	}
 	
 	public static void Login() {
@@ -77,7 +77,7 @@ public class JavaMail implements Runnable {
 				});
 	}
 	
-	public static void SendMail() {
+	public synchronized static void SendMail() {
 		
         try {
         	MimeMessage msg = new MimeMessage(session);
